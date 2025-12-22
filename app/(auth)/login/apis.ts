@@ -4,7 +4,7 @@
 // import { FetchPost } from "@/lib/http";
 import { toast } from "sonner"
 import { redirect } from 'next/navigation'
-import { FetchPost } from "@/lib/http"
+import { FetchPost, AuthKey } from "@/lib/http"
 
 interface User {
   username: string;
@@ -47,8 +47,8 @@ const signUpUser = async (u: User) => {
     return
   }
   
-  localStorage.setItem("Authorization", data)
-  toast.success("signUp success")
+  localStorage.setItem(AuthKey, data)
+  toast.success(`signUp success ${data}`)
   redirect("/pages")
 };
 
@@ -59,9 +59,9 @@ const loginUser = async (u: User) => {
     return
   }
   
-  document.cookie = `Authorization=${data}`
-  localStorage.setItem("Authorization", data)
-  toast.success("login success")
+  document.cookie = `${AuthKey}=${data}`
+  localStorage.setItem(AuthKey, data)
+  toast.success(`signUp success ${data}`)
   redirect("/pages")
 }
 

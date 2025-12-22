@@ -2,6 +2,7 @@
 // import type RequestInit from "next/dist/server/web/spec-extension/request";
 
 type Server = "base" | "backup"
+const AuthKey: string = "Authorization"
 
 type ServerUrl = {
   base: string;
@@ -139,4 +140,5 @@ export {
   UploadFile,
   DownloadFile,
   Resp,
+  AuthKey,
 };
