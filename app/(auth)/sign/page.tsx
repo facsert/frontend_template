@@ -1,124 +1,187 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
+// import * as React from "react";
+import Link from "next/link";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Controller, useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-
-interface User {
-  username: string;
-  password: string;
-  email: string;
-}
+import {
+  signUpUser,
+  // useLoginUser,
+  // newUser,
+  // type User,
+} from "../apis";
 
 const formSchema = z.object({
+  email: z
+    .string()
+    .min(5, "email must be at least 5 characters.")
+    .max(32, "email must be at most 32 characters."),
   username: z
     .string()
-    .min(2, { message: "username must be at least 2 characters." })
-    .default(""),
+    .min(3, "username must be at least 3 characters.")
+    .max(20, "username must be at most 20 characters."),
   password: z
     .string()
-    .min(6, { message: "password must be at least 6 characters." })
-    .default(""),
-  email: z.email({ message: "invalid email address." }).default(""),
+    .min(3, "password must be at least 3 characters.")
+    .max(20, "password must be at most 20 characters."),
+  confirmPassword: z
+    .string()
+    .min(3, "password must be at least 3 characters.")
+    .max(20, "password must be at most 20 characters."),
 });
 
-export default function LoginPage() {
+export default function BugReportForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    mode: "onChange",
+    defaultValues: {
+      email: "root@example.com",
+      username: "root",
+      password: "admin",
+      confirmPassword: "admin",
+    },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    const user: User = {
-      username: data.username,
-      password: data.password,
-      email: data.email,
-    };
-    toast.success(`login successful with ${JSON.stringify(user)}!`);
-  }
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    if (data.password !== data.confirmPassword) {
+      toast.error("password and confirm password do not match");
+      return;
+    }
+
+    signUpUser(data);
+  };
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 items-center justify-center p-6 md:p-10">
-      <Card className="w-full max-w-sm">
+    <div className="w-full h-full grid place-content-center">
+      <Card className="w-96 sm:max-w-md">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Please login to your account.</CardDescription>
+          <CardTitle>SignUp</CardTitle>
+          <FieldDescription>
+            Already have an account? <Link href="/login">Login</Link>
+          </FieldDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-              <Controller
-                name="username"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Username</FieldLabel>
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder="username"
-                      required
-                    />
-                    {fieldState.error && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
               <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Email</FieldLabel>
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-rhf-demo-title">Email</FieldLabel>
                     <Input
                       {...field}
+                      // id="form-rhf-demo-title"
                       type="email"
-                      placeholder="name@example.com"
-                      required
+                      aria-invalid={fieldState.invalid}
+                      placeholder="root@mail.com"
+                      autoComplete="off"
                     />
-                    {fieldState.error && (
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
+
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-rhf-demo-title">
+                      Username
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      // id="form-rhf-demo-title"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="username"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
               <Controller
                 name="password"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Password</FieldLabel>
-                    <Input {...field} type="password" placeholder="password" />
-                    {fieldState.error && (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-rhf-demo-title">
+                      Password
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      type="password"
+                      id="form-rhf-demo-title"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="password"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
-              <Button type="submit" className="w-full mt-4">
-                Login
-              </Button>
+
+              <Controller
+                name="confirmPassword"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-rhf-demo-title">
+                      Confirm Password
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      type="password"
+                      // id="form-rhf-demo-title"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="confirm password"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
             </FieldGroup>
           </form>
         </CardContent>
+        <CardFooter>
+          <Field orientation="horizontal" className="grid grid-cols-2">
+            <Button type="button" variant="outline" onClick={() => form.reset()}>
+              Reset
+            </Button>
+            <Button type="submit" form="form-rhf-demo">
+              SignUp
+            </Button>
+          </Field>
+        </CardFooter>
       </Card>
     </div>
   );

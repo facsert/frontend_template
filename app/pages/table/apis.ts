@@ -26,7 +26,7 @@ const FetchUsers = async (
 ) => {
   const token = localStorage.getItem(AuthKey)?? ""
   const {result, msg, data} = await FetchGet<User[]>("/api/v1/users", 
-    { headers: {AuthKey: token} }
+    { headers: {[AuthKey]: token} }
   )
   if (!result || data === null) {
     toast.error(msg)
