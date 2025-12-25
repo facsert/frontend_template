@@ -33,7 +33,7 @@ import {
 
 const formSchema = z.object({
   email: z
-    .string()
+    .email()
     .min(5, "email must be at least 5 characters.")
     .max(32, "email must be at most 32 characters."),
   username: z

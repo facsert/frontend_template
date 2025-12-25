@@ -17,47 +17,50 @@ import {
 } from "@/components/ui/card"
 import {
   Field,
-  FieldDescription,
+  // FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from "@/components/ui/input-group"
+import { loginUser } from "./apis"
+
 
 const formSchema = z.object({
-  title: z
+  email: z
+    .email()
+    .min(5, "email must be at least 5 characters.")
+    .max(32, "email must be at most 32 characters."),
+  username: z
     .string()
-    .min(5, "Bug title must be at least 5 characters.")
-    .max(32, "Bug title must be at most 32 characters."),
-  description: z
+    .min(4, "username must be at least 4 characters.")
+    .max(20, "username must be at most 20 characters."),
+  password: z
     .string()
-    .min(20, "Description must be at least 20 characters.")
-    .max(100, "Description must be at most 100 characters."),
+    .min(4, "password must be at least 4 characters.")
+    .max(20, "password must be at most 20 characters."),
 })
 
-export function BugReportForm() {
+export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      email: "user@example.com",
+      username: "user",
+      password: "password",
     },
   })
-
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  
+  const onSubmit = async (user: z.infer<typeof formSchema>) => {
+  // function onSubmit(data: z.infer<typeof formSchema>) {
+    loginUser(user)
     toast("You submitted the following values:", {
       description: (
         <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-          <code>{JSON.stringify(data, null, 2)}</code>
+          <code>{JSON.stringify(user, null, 2)}</code>
         </pre>
       ),
-      position: "bottom-right",
+      position: "top-center",
       classNames: {
         content: "flex flex-col gap-2",
       },
@@ -68,29 +71,31 @@ export function BugReportForm() {
   }
 
   return (
-    <Card className="w-full sm:max-w-md">
+    <Card className="w-80 sm:max-w-md">
       <CardHeader>
-        <CardTitle>Bug Report</CardTitle>
+        <CardTitle>LoginForm</CardTitle>
         <CardDescription>
-          Help us improve by reporting bugs you encounter.
+          login your account
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
+
             <Controller
-              name="title"
+              name="email"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="form-rhf-demo-title">
-                    Bug Title
+                    Email
                   </FieldLabel>
                   <Input
                     {...field}
                     id="form-rhf-demo-title"
+                    type="email"
                     aria-invalid={fieldState.invalid}
-                    placeholder="Login button not working on mobile"
+                    placeholder="example@mail.com"
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
@@ -99,48 +104,59 @@ export function BugReportForm() {
                 </Field>
               )}
             />
+
             <Controller
-              name="description"
+              name="username"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="form-rhf-demo-description">
-                    Description
+                    Username
                   </FieldLabel>
-                  <InputGroup>
-                    <InputGroupTextarea
+                    <Input
                       {...field}
                       id="form-rhf-demo-description"
-                      placeholder="I'm having an issue with the login button on mobile."
-                      rows={6}
-                      className="min-h-24 resize-none"
+                      placeholder="username"
+                      className="resize-none"
                       aria-invalid={fieldState.invalid}
                     />
-                    <InputGroupAddon align="block-end">
-                      <InputGroupText className="tabular-nums">
-                        {field.value.length}/100 characters
-                      </InputGroupText>
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <FieldDescription>
-                    Include steps to reproduce, expected behavior, and what
-                    actually happened.
-                  </FieldDescription>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
                 </Field>
               )}
             />
+
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-demo-description">
+                    Password
+                  </FieldLabel>
+                    <Input
+                      {...field}
+                      id="form-rhf-demo-description"
+                      placeholder="password"
+                      aria-invalid={fieldState.invalid}
+                    />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
           </FieldGroup>
         </form>
       </CardContent>
       <CardFooter>
-        <Field orientation="horizontal">
+        <Field orientation="horizontal" className="grid grid-cols-2">
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="form-rhf-demo">
+          <Button type="submit" form="login-form">
             Submit
           </Button>
         </Field>
