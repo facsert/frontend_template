@@ -2,6 +2,7 @@
 import SignForm from "./sign_form"
 import LoginForm from "./login_form"
 import SelectForm from "./select_from";
+import CheckForm from "./check_form"
 
 export default function FormPage() { 
   return (
@@ -9,6 +10,7 @@ export default function FormPage() {
       <SignForm />
       <LoginForm />
       <SelectForm />
+      <CheckForm />
     </div>
   );
 };

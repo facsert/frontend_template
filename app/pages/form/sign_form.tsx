@@ -82,7 +82,7 @@ export default function SignForm() {
   return (
     <Card className="w-80 sm:max-w-md">
       <CardHeader>
-        <CardTitle>LoginForm</CardTitle>
+        <CardTitle>SignForm</CardTitle>
         <CardDescription>
           login your account
         </CardDescription>

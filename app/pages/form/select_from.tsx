@@ -50,8 +50,6 @@ const formSchema = z.object({
     .enum(languages),
   birthday: z
     .string()
-    // .min(new Date(1900,1,1), "")
-    // .max(new Date(), "")
 })
 
 export default function SelectForm() {

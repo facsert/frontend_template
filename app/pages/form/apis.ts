@@ -1,5 +1,6 @@
 
 // import { FetchPost } from "@/lib/http";
+import { Target } from "lucide-react";
 import { toast } from "sonner";
 
 interface User {
@@ -64,6 +65,20 @@ interface Person {
     birthday: Date
 }
 
+type Target = "Learning"| "Work"| "Research"| "Business"
+const targets: Target[] = [
+    "Learning",
+    "Work",
+    "Research",
+    "Business",
+]
+
+interface Project {
+    name: string;
+    public: boolean;
+    target: Target[];
+}
+
 export { 
     loginUser, 
     signUser, 
@@ -71,9 +86,11 @@ export {
 
     languages,
     genders,
+    targets,
 };
 export type { 
     User,
     Person,
     Gender,
+    Project,
 };
