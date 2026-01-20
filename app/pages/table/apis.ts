@@ -14,16 +14,26 @@ interface User {
 interface UsersState {
   users: User[],
   setUsers: (users: User[]) => void;
+
+  uniqueNames: string[],
+  setUniqueNames: (names: string[]) => void,
 }
 
 const useUsers = create<UsersState>((set) => ({
   users: [],
-setUsers: (users) => set({users}),
+  setUsers: (users) => set({users}),
+
+  uniqueNames: [],
+  setUniqueNames: (names) => set({uniqueNames: names}),
 }))
 
-const FetchUsers = async (
-  setUsers: (users: User[]) => void
-) => {
+const FetchUsers = async ({
+  setUsers,
+  setUniqueNames,
+}: {
+  setUsers: (users: User[]) => void,
+  setUniqueNames: (names: string[]) => void,
+}) => {
   const token = localStorage.getItem(AuthKey)?? ""
   const {result, msg, data} = await FetchGet<User[]>("/api/v1/users", 
     { headers: {[AuthKey]: token} }
@@ -32,7 +42,9 @@ const FetchUsers = async (
     toast.error(msg)
     return
   }
+
   setUsers(data)
+  setUniqueNames([...new Set(data.map(u => u.username))])
 };
 
 export { 

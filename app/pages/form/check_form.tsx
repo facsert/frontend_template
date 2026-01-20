@@ -18,7 +18,7 @@ import {
 import {
   Field,
   // FieldDescription,
-  // FieldError,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -91,6 +91,9 @@ export default function CheckForm() {
                     placeholder="project name"
                     autoComplete="off"
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -107,6 +110,9 @@ export default function CheckForm() {
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}¡
                 </Field>
               )}
             />
