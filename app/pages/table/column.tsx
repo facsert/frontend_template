@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type ColumnDef, Column, Row } from "@tanstack/react-table";
 import {
   DropdownMenu,
@@ -10,15 +11,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
   ArrowDown,
   ArrowUp,
   ChevronsUpDown,
   EyeOff,
   MoreHorizontal,
 } from "lucide-react";
-import { type User } from "./apis";
+import { type User, useUsers } from "./apis";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { TableUserForm } from "./form";
 
 const columns: ColumnDef<User>[] = [
   {
@@ -124,6 +134,8 @@ function ColumnSorted<TData, TValue>({
 }
 
 function ColumnActions<TData>({ row }: { row: Row<TData> }) {
+  const [open, setOpen] = useState(false);
+  const { deleteUser, getUsers } = useUsers();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -137,10 +149,33 @@ function ColumnActions<TData>({ row }: { row: Row<TData> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit {JSON.stringify(row.original)}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(true)}>
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+        <DropdownMenuItem 
+          variant="destructive"
+          onClick={async () => {
+            await deleteUser((row.original as User).id)
+            getUsers()
+          }}
+        >
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
+
+      <Dialog open={open} onOpenChange={() => setOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>
+              Modify the user details below.
+            </DialogDescription>
+          </DialogHeader>
+          <TableUserForm user={row.original as User} edit={true} />
+        </DialogContent>
+      </Dialog>
+
     </DropdownMenu>
   );
 }

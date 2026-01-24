@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type Column } from "@tanstack/react-table";
 import { type Table } from "@tanstack/react-table";
 import { X, Check, PlusCircle } from "lucide-react";
@@ -20,15 +21,32 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useUsers } from "./apis";
+import { type User, useUsers } from "./apis";
+import { TableUserForm } from "./form";
 
 function TableToolbar<TData>({ table }: { table: Table<TData> }) {
   const { uniqueNames } = useUsers();
+  const [open, setOpen] = useState(false);
   const isFiltered = table.getState().columnFilters.length > 0;
-
+  const user: User= {
+    id: 0,
+    email: "",
+    username: "",
+    password: "",
+    created_at: new Date(),
+    updated_at: new Date(),
+  }
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
@@ -63,9 +81,23 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button size="sm">Refresh</Button>
-        <Button size="sm">Export</Button>
+        <Button variant="outline" size="sm">Refresh</Button>
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>Insert</Button>
+        <Button variant="outline" size="sm">Export</Button>
       </div>
+
+      <Dialog open={open} onOpenChange={() => setOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Insert User</DialogTitle>
+            <DialogDescription>
+              Create a new user.
+            </DialogDescription>
+          </DialogHeader>
+          <TableUserForm user={user} edit={false} />
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }
