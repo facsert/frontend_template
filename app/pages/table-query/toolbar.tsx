@@ -27,17 +27,25 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  // DialogTrigger,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { type User, useUsers } from "./apis";
+import { type User, useGetUsers } from "./apis";
 import { TableUserForm } from "./form";
 
 function TableToolbar<TData>({ table }: { table: Table<TData> }) {
-  const { uniqueNames } = useUsers();
   const [open, setOpen] = useState(false);
+  const { data, isLoading, error } = useGetUsers();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error || data === null || data === undefined) {
+    return <div>Error</div>;
+  }
+  
   const isFiltered = table.getState().columnFilters.length > 0;
   const user: User= {
     id: 0,
@@ -62,7 +70,7 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
           <ToolbarFilter
             column={table.getColumn("username")}
             title="Username"
-            options={uniqueNames.map((name) => ({
+            options={[...new Set(data.map(u => u.username))].map((name) => ({
               label: name,
               value: name,
             }))}

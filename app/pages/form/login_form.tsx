@@ -92,7 +92,6 @@ export default function LoginForm() {
                   </FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
                     type="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="example@mail.com"
@@ -115,7 +114,6 @@ export default function LoginForm() {
                   </FieldLabel>
                     <Input
                       {...field}
-                      id="form-rhf-demo-description"
                       placeholder="username"
                       className="resize-none"
                       aria-invalid={fieldState.invalid}

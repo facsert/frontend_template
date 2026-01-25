@@ -16,7 +16,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  // DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   ArrowDown,
@@ -25,7 +25,7 @@ import {
   EyeOff,
   MoreHorizontal,
 } from "lucide-react";
-import { type User, useUsers } from "./apis";
+import { type User, useDeleteUser } from "./apis";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { TableUserForm } from "./form";
@@ -135,7 +135,9 @@ function ColumnSorted<TData, TValue>({
 
 function ColumnActions<TData>({ row }: { row: Row<TData> }) {
   const [open, setOpen] = useState(false);
-  const { deleteUser, getUsers } = useUsers();
+  
+  const deleteUser = useDeleteUser();
+  // const { deleteUser, getUsers } = useUsers();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -156,8 +158,8 @@ function ColumnActions<TData>({ row }: { row: Row<TData> }) {
         <DropdownMenuItem 
           variant="destructive"
           onClick={async () => {
-            await deleteUser((row.original as User).id)
-            getUsers()
+            await deleteUser.mutateAsync((row.original as User).id);
+            // getUsers()
           }}
         >
           Delete

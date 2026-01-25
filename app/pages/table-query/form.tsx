@@ -9,7 +9,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { type User, useUsers } from "./apis";
+import { type User, useUpdateUser, useCreateUser } from "./apis";
 
 const formSchema = z.object({
   username: z
@@ -37,11 +37,13 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
       updated_at: user.updated_at.toLocaleString(),
     },
   });
+  const updateUser = useUpdateUser();
+  const createUser = useCreateUser();
   
-  const { updateUser, insertUser, getUsers } = useUsers();
+  // const { updateUser, insertUser, getUsers } = useUsers();
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (edit) {
-      await updateUser({
+      await updateUser.mutateAsync({
         id: user.id,
         email: data.email,
         username: data.username,
@@ -50,7 +52,7 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
         updated_at: new Date(),
       })
     } else {
-      await insertUser({
+      await createUser.mutateAsync({
         id: user.id,
         email: data.email,
         username: data.username,
@@ -59,11 +61,10 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
         updated_at: new Date(),
       })
     }
-    getUsers()
   };
 
   return (
-    <form id="table-user-form" onSubmit={form.handleSubmit(onSubmit)}>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup className="grid grid-cols-2">
 
         <Controller

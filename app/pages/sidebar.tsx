@@ -27,7 +27,8 @@ const pageItems: PageItem[] = [
   {pageType: "component", name: "Card", url: "/pages/card"},
   
   {pageType: "layout", name: "Form", url: "/pages/form"},
-  {pageType: "layout", name: "Table", url: "/pages/table"},
+  {pageType: "layout", name: "Table Query", url: "/pages/table-query"},
+  {pageType: "layout", name: "Table Zustand", url: "/pages/table-zustand"},
 ];
 
 function AppSidebar({ ...props }) { 

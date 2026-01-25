@@ -101,7 +101,6 @@ export default function SignForm() {
                   </FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
                     type="email"
                     aria-invalid={fieldState.invalid}
                     placeholder="example@mail.com"
@@ -124,7 +123,6 @@ export default function SignForm() {
                   </FieldLabel>
                     <Input
                       {...field}
-                      id="form-rhf-demo-description"
                       placeholder="username"
                       aria-invalid={fieldState.invalid}
                     />
@@ -145,7 +143,6 @@ export default function SignForm() {
                   </FieldLabel>
                     <Input
                       {...field}
-                      id="form-rhf-demo-description"
                       placeholder="password"
                       aria-invalid={fieldState.invalid}
                     />
@@ -166,7 +163,6 @@ export default function SignForm() {
                   </FieldLabel>
                     <Input
                       {...field}
-                      id="form-rhf-demo-description"
                       placeholder="password"
                       aria-invalid={fieldState.invalid}
                     />

@@ -86,7 +86,6 @@ export default function CheckForm() {
                   <FieldLabel>Name</FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
                     aria-invalid={fieldState.invalid}
                     placeholder="project name"
                     autoComplete="off"

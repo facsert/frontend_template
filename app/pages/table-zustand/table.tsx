@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -50,13 +50,19 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [currPage, setCurrPage] = useState(0);
+
+  useEffect(() => {
+    setCurrPage(
+      sessionStorage.getItem("tableUserPageIndex")
+        ? parseInt(sessionStorage.getItem("tableUserPageIndex")!, 10)
+        : 0,
+    );
+  }, []);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -67,10 +73,15 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+      pagination: {
+        pageSize: 5,
+        pageIndex: currPage,
+      },
     },
     initialState: {
       pagination: {
         pageSize: 25,
+        pageIndex: currPage,
       },
     },
     enableRowSelection: true,
@@ -89,7 +100,6 @@ export function DataTable<TData, TValue>({
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex flex-col w-[40vw] gap-4">
-
         <TableToolbar table={table} />
 
         <div className="overflow-hidden rounded-md border">
@@ -104,7 +114,7 @@ export function DataTable<TData, TValue>({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -123,7 +133,7 @@ export function DataTable<TData, TValue>({
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}
@@ -143,13 +153,24 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
 
-        <PageNation table={table} />
+        <PageNation table={table} setCurrPage={setCurrPage} />
       </div>
     </div>
   );
 }
 
-function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
+function PageNation<TData>({
+  table,
+  setCurrPage,
+}: {
+  table: ReactTable<TData>;
+  setCurrPage: Dispatch<SetStateAction<number>>;
+}) {
+  const setPageIndex = (pageIndex: number) => {
+    setCurrPage(pageIndex);
+    table.setPageIndex(pageIndex);
+    sessionStorage.setItem("tableUserPageIndex", pageIndex.toString());
+  };
   return (
     <div className="flex items-center justify-between px-2">
       <div className="text-muted-foreground flex-1 text-sm">
@@ -169,7 +190,7 @@ function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 25, 30, 40, 50].map((pageSize) => (
+              {[5, 10, 20, 25, 30, 40, 50].map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -186,8 +207,10 @@ function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
             variant="outline"
             size="icon"
             className="hidden size-8 lg:flex"
-            onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              setPageIndex(0);
+            }}
           >
             <span className="sr-only">Go to first page</span>
             <ChevronsLeft />
@@ -196,8 +219,10 @@ function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
             variant="outline"
             size="icon"
             className="size-8"
-            onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              setPageIndex(table.getState().pagination.pageIndex - 1);
+            }}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeft />
@@ -206,8 +231,10 @@ function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
             variant="outline"
             size="icon"
             className="size-8"
-            onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            onClick={() => {
+              setPageIndex(table.getState().pagination.pageIndex + 1);
+            }}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRight />
@@ -216,8 +243,10 @@ function PageNation<TData>({ table }: { table: ReactTable<TData> }) {
             variant="outline"
             size="icon"
             className="hidden size-8 lg:flex"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
+            onClick={() => {
+              setPageIndex(table.getPageCount() - 1);
+            }}
           >
             <span className="sr-only">Go to last page</span>
             <ChevronsRight />

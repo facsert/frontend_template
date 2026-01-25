@@ -30,7 +30,10 @@ async function FetchGet<T>(
   try {
     const response = await fetch(serverUrl[server] + api, {
       method: "GET",
-      headers: { ...body.headers },
+      headers: {
+        [AuthKey]: localStorage.getItem(AuthKey)?? "",
+        ...body.headers 
+      },
     });
     if (!response.ok) {
       throw new Error(`GET ${api} ${response.status}`);
@@ -52,6 +55,7 @@ async function FetchPost<T>(
       ...body,
       headers: {
         "Content-Type": "application/json",
+        [AuthKey]: localStorage.getItem(AuthKey)?? "",
         ...body.headers,
       },
     });
