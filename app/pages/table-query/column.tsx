@@ -150,7 +150,7 @@ function ColumnActions<TData>({ row }: { row: Row<TData> }) {
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="start">
         <DropdownMenuItem onClick={() => setOpen(true)}>
           Edit
         </DropdownMenuItem>

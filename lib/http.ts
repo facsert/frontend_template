@@ -35,11 +35,22 @@ async function FetchGet<T>(
         ...body.headers 
       },
     });
+
     if (!response.ok) {
       throw new Error(`GET ${api} ${response.status}`);
     }
+
+    // for (const [key, value] of response.headers.entries()) {
+    //   console.log(`headers  ${key}: ${value}`);
+    // }
+    // const data = await response.json();
+    // console.log(`data: ${JSON.stringify(data)}`)
+    // console.log(`headers: ${JSON.stringify(response.headers)}`)
+    // console.log(`response: ${JSON.stringify(response)}`)
     return (await response.json()) as Resp<T>;
+
   } catch (err) {
+    console.log(`FetchGet error: ${err}`)
     return new Resp<T>(false, String(err), null);
   }
 }
@@ -101,11 +112,16 @@ async function FetchFile<T>(
   server: Server = "base",
 ): Promise<Resp<T>> {
   try {
-    const response = await fetch(serverUrl[server] + api);
+    const response = await fetch(serverUrl[server] + api, {
+      headers: {
+        [AuthKey]: localStorage.getItem(AuthKey)?? "",
+      },
+    });
+
     if (!response.ok) {
       throw new Error(`GET ${api} ${response.status}`);
     }
-
+    
     if (response.headers.get("Content-Disposition")?.includes("filename=")) {
       await DownloadFile(response);
       return new Resp<T>(true, "download file success", null);
@@ -113,6 +129,7 @@ async function FetchFile<T>(
     
     return (await response.json()) as Resp<T>;
   } catch (error) {
+
     return new Resp<T>(false, String(error), null);
   }
 }
@@ -122,6 +139,7 @@ async function DownloadFile(response: Response): Promise<boolean> {
   if (!disposition || !disposition.includes("filename=")) {
     return false;
   }
+  console.log(`disposition: ${disposition}`)
   const fileName = disposition.split("filename=")[1].replace(/["']/g, "");
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);

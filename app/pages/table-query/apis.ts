@@ -1,7 +1,7 @@
 
 import { toast } from "sonner"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { FetchGet, FetchPost } from "@/lib/http"
+import { FetchGet, FetchPost, FetchFile } from "@/lib/http"
 
 
 interface User {
@@ -90,11 +90,26 @@ const useDeleteUser = () => {
   })
 }
 
+const exportUsers = async (format: string) => {
+
+  // const { result, msg, data} = await FetchGet<string>(`/api/v1/users/export?format=${format}`);
+
+    const {result, msg} = await FetchFile<string>(`/api/v1/users/export?format=${format}`)
+    if (!result) {
+      toast.error(msg);
+      return;
+    }
+
+    // toast.success(`export users successfully: ${data}`);
+};
+
 export { 
   useGetUsers,
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
+
+  exportUsers,
 };
 
 export type { 

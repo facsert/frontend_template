@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { type Column } from "@tanstack/react-table";
 import { type Table } from "@tanstack/react-table";
-import { X, Check, PlusCircle } from "lucide-react";
+import { X, Check, PlusCircle, Sheet, FileBraces  } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,10 +29,17 @@ import {
   DialogTitle,
   // DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { type User, useGetUsers } from "./apis";
+import { type User, useGetUsers, exportUsers } from "./apis";
 import { TableUserForm } from "./form";
 
 function TableToolbar<TData>({ table }: { table: Table<TData> }) {
@@ -91,7 +98,25 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm">Refresh</Button>
         <Button variant="outline" size="sm" onClick={() => setOpen(true)}>Insert</Button>
-        <Button variant="outline" size="sm">Export</Button>
+        {/* <Button variant="outline" size="sm" onClick={() => exportUsers("csv")}>Export</Button> */}
+        <DropdownMenu> 
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start"> 
+            <DropdownMenuItem onClick={() => exportUsers("csv")}>
+              <Sheet />
+              CSV
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => exportUsers("json")}>
+              <FileBraces />
+              JSON
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <Dialog open={open} onOpenChange={() => setOpen(false)}>
