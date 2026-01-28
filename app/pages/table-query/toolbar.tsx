@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { type Column } from "@tanstack/react-table";
 import { type Table } from "@tanstack/react-table";
-import { X, Check, PlusCircle, Sheet, FileBraces  } from "lucide-react";
+import { X, Check, PlusCircle, Sheet, FileBraces } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
   // DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,10 +41,11 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { type User, useGetUsers, exportUsers } from "./apis";
 import { TableUserForm } from "./form";
+import { toast } from "sonner";
 
 function TableToolbar<TData>({ table }: { table: Table<TData> }) {
   const [open, setOpen] = useState(false);
-  const { data, isLoading, error } = useGetUsers();
+  const { data, isLoading, error, refetch } = useGetUsers();
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -52,16 +53,16 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
   if (error || data === null || data === undefined) {
     return <div>Error</div>;
   }
-  
+
   const isFiltered = table.getState().columnFilters.length > 0;
-  const user: User= {
+  const user: User = {
     id: 0,
     email: "",
     username: "",
     password: "",
     created_at: new Date(),
     updated_at: new Date(),
-  }
+  };
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
@@ -77,7 +78,7 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
           <ToolbarFilter
             column={table.getColumn("username")}
             title="Username"
-            options={[...new Set(data.map(u => u.username))].map((name) => ({
+            options={[...new Set(data.map((u) => u.username))].map((name) => ({
               label: name,
               value: name,
             }))}
@@ -96,16 +97,21 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm">Refresh</Button>
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>Insert</Button>
-        {/* <Button variant="outline" size="sm" onClick={() => exportUsers("csv")}>Export</Button> */}
-        <DropdownMenu> 
+        <Button variant="outline" size="sm" onClick={() => refetch()}>
+          Refresh
+        </Button>
+
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+          Insert
+        </Button>
+
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
               Export
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start"> 
+          <DropdownMenuContent align="start">
             <DropdownMenuItem onClick={() => exportUsers("csv")}>
               <Sheet />
               CSV
@@ -123,14 +129,11 @@ function TableToolbar<TData>({ table }: { table: Table<TData> }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Insert User</DialogTitle>
-            <DialogDescription>
-              Create a new user.
-            </DialogDescription>
+            <DialogDescription>Create a new user.</DialogDescription>
           </DialogHeader>
           <TableUserForm user={user} edit={false} />
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
@@ -212,7 +215,7 @@ function ToolbarFilter<TData, TValue>({
                       }
                       const filterValues = Array.from(selectedValues);
                       column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
+                        filterValues.length ? filterValues : undefined,
                       );
                     }}
                   >
@@ -221,7 +224,7 @@ function ToolbarFilter<TData, TValue>({
                         "flex size-4 items-center justify-center rounded-[4px] border",
                         isSelected
                           ? "bg-primary border-primary text-primary-foreground"
-                          : "border-input [&_svg]:invisible"
+                          : "border-input [&_svg]:invisible",
                       )}
                     >
                       <Check className="text-primary-foreground size-3.5" />

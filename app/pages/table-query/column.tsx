@@ -16,8 +16,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  // DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   ArrowDown,
   ArrowUp,
@@ -80,8 +79,10 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-interface ColumnSortedProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface ColumnSortedProps<
+  TData,
+  TValue,
+> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }
@@ -135,7 +136,7 @@ function ColumnSorted<TData, TValue>({
 
 function ColumnActions<TData>({ row }: { row: Row<TData> }) {
   const [open, setOpen] = useState(false);
-  
+
   const deleteUser = useDeleteUser();
   // const { deleteUser, getUsers } = useUsers();
   return (
@@ -151,15 +152,12 @@ function ColumnActions<TData>({ row }: { row: Row<TData> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        <DropdownMenuItem onClick={() => setOpen(true)}>
-          Edit
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(true)}>Edit</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem 
+        <DropdownMenuItem
           variant="destructive"
           onClick={async () => {
             await deleteUser.mutateAsync((row.original as User).id);
-            // getUsers()
           }}
         >
           Delete
@@ -177,7 +175,6 @@ function ColumnActions<TData>({ row }: { row: Row<TData> }) {
           <TableUserForm user={row.original as User} edit={true} />
         </DialogContent>
       </Dialog>
-
     </DropdownMenu>
   );
 }

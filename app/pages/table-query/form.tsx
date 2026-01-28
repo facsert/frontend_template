@@ -39,7 +39,7 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
   });
   const updateUser = useUpdateUser();
   const createUser = useCreateUser();
-  
+
   // const { updateUser, insertUser, getUsers } = useUsers();
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (edit) {
@@ -50,7 +50,7 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
         password: data.password,
         created_at: user.created_at,
         updated_at: new Date(),
-      })
+      });
     } else {
       await createUser.mutateAsync({
         id: user.id,
@@ -59,22 +59,21 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
         password: data.password,
         created_at: new Date(),
         updated_at: new Date(),
-      })
+      });
     }
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup className="grid grid-cols-2">
-
         <Controller
           name="email"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field className="col-span-2">
               <FieldLabel>Email</FieldLabel>
-              <Input 
-                {...field} 
+              <Input
+                {...field}
                 type="email"
                 aria-invalid={fieldState.invalid}
                 placeholder="example@mail.com"
@@ -92,7 +91,7 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
           render={({ field, fieldState }) => (
             <Field className="col-span-2">
               <FieldLabel>Username</FieldLabel>
-              <Input 
+              <Input
                 {...field}
                 aria-invalid={fieldState.invalid}
                 placeholder="username"
@@ -111,8 +110,8 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
             render={({ field, fieldState }) => (
               <Field className="col-span-2">
                 <FieldLabel>Password</FieldLabel>
-                <Input 
-                  {...field} 
+                <Input
+                  {...field}
                   aria-invalid={fieldState.invalid}
                   placeholder="password"
                 />
@@ -124,34 +123,37 @@ function TableUserForm({ user, edit }: { user: User; edit: boolean }) {
           />
         )}
 
-        {edit && (<Controller
-          name="created_at"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field className="col-span-1">
-              <FieldLabel>Created At</FieldLabel>
-              <Input {...field} aria-invalid={fieldState.invalid} disabled />
-              {fieldState.error && (
-                <FieldError>{fieldState.error.message}</FieldError>
-              )}
-            </Field>
-          )}
-        />)}
+        {edit && (
+          <Controller
+            name="created_at"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field className="col-span-1">
+                <FieldLabel>Created At</FieldLabel>
+                <Input {...field} aria-invalid={fieldState.invalid} disabled />
+                {fieldState.error && (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                )}
+              </Field>
+            )}
+          />
+        )}
 
         {edit && (
-        <Controller
-          name="updated_at"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field className="col-span-1">
-              <FieldLabel>Updated At</FieldLabel>
-              <Input {...field} aria-invalid={fieldState.invalid} disabled />
-              {fieldState.error && (
-                <FieldError>{fieldState.error.message}</FieldError>
-              )}
-            </Field>
-          )}
-        />)}
+          <Controller
+            name="updated_at"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field className="col-span-1">
+                <FieldLabel>Updated At</FieldLabel>
+                <Input {...field} aria-invalid={fieldState.invalid} disabled />
+                {fieldState.error && (
+                  <FieldError>{fieldState.error.message}</FieldError>
+                )}
+              </Field>
+            )}
+          />
+        )}
 
         <Button className="col-span-2" type="submit">
           {edit ? "Update User" : "Create User"}

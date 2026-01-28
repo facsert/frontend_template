@@ -99,7 +99,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex flex-col w-[40vw] gap-4">
+      <div>Zustand</div>
+      <div className="flex flex-col w-[50vw] gap-4">
         <TableToolbar table={table} />
 
         <div className="overflow-hidden rounded-md border">
